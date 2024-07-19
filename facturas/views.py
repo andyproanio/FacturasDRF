@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
-import requests
+import requests, os
+
 
 # Create your views here.
 
@@ -19,6 +20,9 @@ class FiltrarInventario(APIView):
         finally:
             c.close()
 
-        response = requests.get('http://localhost:8000/api/Inventario')
+        hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+        if hostname:
+            response = requests.get(f'https://{hostname}/api/Inventario')
+        else:
+            response = requests.get('http://localhost:8000/api/Inventario')
         return Response(response.json())
-

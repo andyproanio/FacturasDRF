@@ -11,12 +11,13 @@ import requests, os
 class FiltrarInventario(APIView):
     def get(self, request):
         mes = request.query_params['mes']
+        cedula = request.query_params['cedula']
 
         c = connection.cursor()
         try:
             c.execute('TRUNCATE facturas_inventario')
             c.execute('ALTER SEQUENCE facturas_inventario_id_seq RESTART')
-            c.execute(f'INSERT INTO facturas_inventario SELECT * FROM {mes} ORDER BY id ASC')
+            c.execute(f"INSERT INTO facturas_inventario SELECT * FROM {mes} WHERE IDENTIFICACION_RECEPTOR LIKE '{cedula}%' ORDER BY id ASC")
         finally:
             c.close()
 
